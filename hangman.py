@@ -194,8 +194,7 @@ def hangman_with_hints(secret_word, wordlist):
 		if(entered_character=='*'):
 			print(CPURPLE + "\nThere some words that correspond to the charactes you've guessed : " + CEND)
 			print(CPURPLE + str(show_possible_matches(get_guessed_word(secret_word, user_symbols)[1], wordlist)) + CEND)
-			CRED='\033[91m'
-			CEND='\033[0m'
+			
 			print("\n")
 			print(CYELLOW + "-----------------------------------------------" + CEND)
 			continue
