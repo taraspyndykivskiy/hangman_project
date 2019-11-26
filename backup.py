@@ -11,10 +11,32 @@
 # (so be sure to read the docstrings!)
 import random
 import string
+import re
 
-
+pattern=re.compile(r"[a-zA-Z]{1}|\*")
 WORDLIST_FILENAME = "words.txt"
 
+def character_validator(pattern, prompt, user_symbols):
+    CEND='\033[0m'
+    CRED='\033[91m'
+    data=validator(pattern, "Enter the symbol you think is in the secret word : ")
+    while (data in user_symbols) :
+        print(CRED + "\nYou have already entered such character!" + CEND)   
+        data=validator(pattern, "Enter the symbol you think is in the secret word : ")
+
+    return data
+
+def validator(pattern, prompt):
+    
+    CEND='\033[0m'
+    CCYAN='\033[36m'
+    CRED='\033[91m'
+    text=input(CCYAN + prompt + CEND)
+    while (not bool(pattern.match(text))) or len(text)!=1:
+        print(CRED + "\nYou have to enter one character!" + CEND)
+        text=input(CCYAN + prompt + CEND)
+
+    return text.lower()
 
 def load_words():
     
@@ -87,7 +109,14 @@ def get_available_letters(letters_guessed):
 
     return final_result[0:len(final_result)-1]
     
-  
+def info(secret_word, user_symbols):
+    CRED='\033[91m'
+    CYELLOW='\033[93m'
+    CEND='\033[0m'
+    print(CRED + get_guessed_word(secret_word, user_symbols)[0] + CEND)
+    print("\n")
+    print(CYELLOW + "-----------------------------------------------" + CEND)
+"""
 def hangman(secret_word):
     
     print("\nWelcome to the game Hangman!")
@@ -141,7 +170,7 @@ def hangman(secret_word):
         "\nThe secret word was : " + secret_word )
         score+=0
         print("Your score is : " + str(score))
-
+"""
 
 def match_with_gaps(my_word, other_word):
     result=False
@@ -184,42 +213,24 @@ def hangman_with_hints(secret_word, wordlist):
     guesses_counter=6
     user_symbols=list()
 
-    while((guesses_counter>0) and (secret_word != get_guessed_word(secret_word, user_symbols)[1])) :
+    while((is_word_guessed(secret_word, user_symbols)==False) and (guesses_counter>0)):
 
         print(CORANGE + "\nYou have " + str(guesses_counter) + " more tries." + CEND)
         print(CYELLOW + "It's possible to use such characters : "+ CEND + CRED + get_available_letters(user_symbols) + CEND)
 
-        entered_character=input(CCYAN + "Enter the symbol you think is in the secret word : " + CEND).lower()
-        
+        entered_character=character_validator(pattern, "Enter the symbol you think is in the secret word : ", user_symbols)
+
         if(entered_character=='*'):
             print(CPURPLE + "\nThere some words that correspond to the charactes you've guessed : " + CEND)
             print(CPURPLE + str(show_possible_matches(get_guessed_word(secret_word, user_symbols)[1], wordlist)) + CEND)
-            CRED='\033[91m'
-            CEND='\033[0m'
+            
             print("\n")
             print(CYELLOW + "-----------------------------------------------" + CEND)
+
             continue
-        drop_iteration=False
-        while((len(entered_character)!=1) or ((entered_character.isalpha()==True) and entered_character=="*") or ((entered_character.isalpha()==False) or (entered_character in user_symbols))):
-            if(entered_character=="*"):
-                print(CPURPLE + "\nThere some words that correspond to the charactes you've guessed : " + CEND)
-                print(CPURPLE + str(show_possible_matches(get_guessed_word(secret_word, user_symbols)[1], wordlist)) + CEND)
-                drop_iteration=True
-                
-                print("\n")
-                print(CYELLOW + "-----------------------------------------------" + CEND)
-                break   
-            elif(entered_character in user_symbols):
-                print(CRED + "\nYou have already entered such character!" + CEND)   
-            else:
-                print(CRED + "\nYou have to enter a character!" + CEND)
-            entered_character=input(CCYAN + "Enter the symbol you think is in the secret word : " + CEND).lower()
-            
-        if(drop_iteration==True):
-            continue
-        
 
         user_symbols.append(entered_character)
+
         if(entered_character in secret_word):
             print(CGREEN + "\nYou guessed a correct character !" + CEND)
             print(CLIGHTGREEN + "Secret word does contain such character : " + entered_character + CEND)
@@ -227,25 +238,18 @@ def hangman_with_hints(secret_word, wordlist):
         else:
             print(CORANGE + "Secret word doesn't contain such character : " + entered_character + CEND)
             guesses_counter-=1
-            print(CRED + get_guessed_word(secret_word, user_symbols)[0] + CEND)
-        #   print(colored('hello', 'red'), colored('world', 'green'))
-            print("\n")
-            print(CYELLOW + "-----------------------------------------------" + CEND)
-            continue
+#           info(secret_word, user_symbols)
+#           continue
 
-            
-        print(CRED + get_guessed_word(secret_word, user_symbols)[0] + CEND)
-        
-        print("\n")
-        print(CYELLOW + "-----------------------------------------------" + CEND)
+        info(secret_word, user_symbols)
 
-    if(secret_word == get_guessed_word(secret_word, user_symbols)[1]):
+    if(is_word_guessed(secret_word, user_symbols)==True):
         print(CGREEN + "\nCongratulations! You have guessed the secret word. It was : "+ CEND + CORANGE + secret_word + CEND)   
         print(CYELLOW + "It took " + str (6-guesses_counter) + " tries to to guess the word." + CEND)
         score+=(guesses_counter)*len(secret_word)
         print(CBLUE + "Your score in this game is : " + str(score) + CEND)
+
     else:
-        
         print(CLIGHTGREEN + "\nUnfortunately, you haven't guessed the secret word, cause you are out of tries." + CEND)
         print(CYELLOW + "\nThe secret word was : " + CEND + CORANGE + secret_word + CEND)
         score+=0
