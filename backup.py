@@ -116,7 +116,7 @@ def info(secret_word, user_symbols):
     print(CRED + get_guessed_word(secret_word, user_symbols)[0] + CEND)
     print("\n")
     print(CYELLOW + "-----------------------------------------------" + CEND)
-"""
+
 def hangman(secret_word):
     
     print("\nWelcome to the game Hangman!")
@@ -170,7 +170,7 @@ def hangman(secret_word):
         "\nThe secret word was : " + secret_word )
         score+=0
         print("Your score is : " + str(score))
-"""
+
 
 def match_with_gaps(my_word, other_word):
     result=False
