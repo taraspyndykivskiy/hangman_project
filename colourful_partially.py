@@ -47,7 +47,15 @@ def get_available_letters(letters_guessed):
 	return "".join(list(map(lambda a: a+" " if (a not in letters_guessed) else "", list(string.ascii_lowercase))))
     
 def hangman(secret_word, wordlist):
-
+	CRED='\033[91m'
+	CYELLOW='\033[93m'
+	CEND='\033[0m'
+	CCYAN='\033[36m'
+	CGREEN='\033[32m'
+	CORANGE='\033[33m'
+	CBLUE='\033[94m' 
+	CLIGHTGREEN='\033[92m'
+	CPURPLE='\033[94m'
 	print("\n\nWelcome to the game Hangman!")
 	score=0
 	print("\nI am thinking of a word that is " +str(len(secret_word)) + " letters long.")
@@ -55,12 +63,12 @@ def hangman(secret_word, wordlist):
 	warnings_counter=3
 	guesses_counter=6
 	user_symbols=list()
-	print("You have " + str(warnings_counter) + " warnings left.")
+	print(CORANGE + "You have " + str(warnings_counter) + " warnings left." + CEND)
 	
 	while((is_word_guessed(secret_word, user_symbols)==False) and (guesses_counter>0)):
 
-		print("You have " + str(guesses_counter) + " guesses left.")
-		print("Available letters : " + get_available_letters(user_symbols))
+		print(CORANGE + "You have " + str(guesses_counter) + " guesses left." + CEND)
+		print(CYELLOW + "Available letters : "+ CEND + CRED + get_available_letters(user_symbols) + CEND)
 
 		entered_character=input("Please guess a letter : ").lower()
 
@@ -78,10 +86,10 @@ def hangman(secret_word, wordlist):
 		
 		
 		if(entered_character in secret_word):
-			print("Good guess : " + get_guessed_word(secret_word, user_symbols))
+			print(CLIGHTGREEN + "Good guess : " + get_guessed_word(secret_word, user_symbols) + CEND)
 
 		else:
-			print("Oops! That letter is not in my word : " + get_guessed_word(secret_word, user_symbols))
+			print(CORANGE + "Oops! That letter is not in my word : " + get_guessed_word(secret_word, user_symbols) + CEND)
 			guesses_counter-=2 if entered_character in ('a', 'o', 'e', 'i', 'u') else 1
 
 			
@@ -93,12 +101,12 @@ def hangman(secret_word, wordlist):
 
 	if(is_word_guessed(secret_word, user_symbols)==True):
 		score+=(guesses_counter)*unique_letters(secret_word)
-		print("\nCongratulations, you won! Your total score for this game is: " + str(score))	
+		print(CGREEN + "\nCongratulations, you won! Your total score for this game is: " + str(score))	
 	
 	else:
 
-		print("\nUnfortunately, you haven't guessed the secret word, cause you are out of tries.")
-		print("\nThe secret word was : " + secret_word)
+		print(CLIGHTGREEN + "\nUnfortunately, you haven't guessed the secret word, cause you are out of tries." + CEND)
+		print(CYELLOW + "\nThe secret word was : " + CEND + CORANGE + secret_word + CEND)
 		
 	return score
 
@@ -145,7 +153,15 @@ def unique_letters(secret_word):
 	return len(set(secret_word))
 
 def hangman_with_hints(secret_word, wordlist):
-	
+	CRED='\033[91m'
+	CYELLOW='\033[93m'
+	CEND='\033[0m'
+	CCYAN='\033[36m'
+	CGREEN='\033[32m'
+	CORANGE='\033[33m'
+	CBLUE='\033[94m' 
+	CLIGHTGREEN='\033[92m'
+	CPURPLE='\033[94m'
 	print("\n\nWelcome to the game Hangman!")
 	score=0
 	print("\nI am thinking of a word that is " +str(len(secret_word)) + " letters long.")
@@ -153,12 +169,12 @@ def hangman_with_hints(secret_word, wordlist):
 	warnings_counter=3
 	guesses_counter=6
 	user_symbols=list()
-	print("You have " + str(warnings_counter) + " warnings left.")
+	print(CORANGE + "You have " + str(warnings_counter) + " warnings left." + CEND)
 	
 	while((is_word_guessed(secret_word, user_symbols)==False) and (guesses_counter>0)):
 
-		print("You have " + str(guesses_counter) + " guesses left.")
-		print("Available letters : " + get_available_letters(user_symbols))
+		print(CORANGE + "You have " + str(guesses_counter) + " guesses left." + CEND)
+		print(CYELLOW + "Available letters : "+ CEND + CRED + get_available_letters(user_symbols) + CEND)
 
 		entered_character=input("Please guess a letter : ").lower()
 
@@ -176,18 +192,18 @@ def hangman_with_hints(secret_word, wordlist):
 		
 		
 		if(entered_character in secret_word):
-			print("Good guess : " + get_guessed_word(secret_word, user_symbols))
+			print(CLIGHTGREEN + "Good guess : " + get_guessed_word(secret_word, user_symbols) + CEND)
 
 		else:
 			if(entered_character!="*"):
-				print("Oops! That letter is not in my word : " + get_guessed_word(secret_word, user_symbols))
+				print(CORANGE + "Oops! That letter is not in my word : " + get_guessed_word(secret_word, user_symbols) + CEND)
 
 			guesses_counter-=2 if entered_character in ('a', 'o', 'e', 'i', 'u') else 1
 
 			
 		if(entered_character=='*'):
 			hint_activated=True
-			print("Possible word matches are: ")
+			print(CPURPLE + "Possible word matches are: " + CEND)
 			show_possible_matches(get_guessed_word(secret_word, user_symbols).replace("_",""))
 			user_symbols.remove(entered_character)
 
@@ -199,21 +215,21 @@ def hangman_with_hints(secret_word, wordlist):
 
 	if(is_word_guessed(secret_word, user_symbols)==True) and hint_activated==False:
 		score+=(guesses_counter)*unique_letters(secret_word)
-		print("\nCongratulations, you won! Your total score for this game is: " + str(score))	
+		print(CGREEN + "\nCongratulations, you won! Your total score for this game is: " + str(score))	
 		
 	elif(hint_activated==True and guesses_counter>0):
 		print("You've used a hint!")
 
 	else:
 
-		print("\nUnfortunately, you haven't guessed the secret word, cause you are out of tries.")
+		print(CLIGHTGREEN + "\nUnfortunately, you haven't guessed the secret word, cause you are out of tries." + CEND)
 		if(hint_activated):
 			print("You've used a hint, but that didn't help!")
-		print("\nThe secret word was : " + secret_word)
+		print(CYELLOW + "\nThe secret word was : " + CEND + CORANGE + secret_word + CEND)
 		
 	return score
 
-def play_with_hints():
+def play_hints():
 	number_games=0
 	points=0
 	cont=''
@@ -239,8 +255,8 @@ def play_without_hints():
 
 if __name__ == "__main__":
    
-	choice=input("If you want to play without hints - press Enter button, any other key otherwise: ")
+	choice=input("If you want to play with hints - press Enter button, any other key otherwise: ")
 	if(choice==""):
-		play_without_hints()	
+		play_hints()
 	else:
-		play_with_hints()
+		play_without_hints()	
