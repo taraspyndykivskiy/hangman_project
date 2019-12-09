@@ -36,7 +36,7 @@ wordlist = load_words()
 
 def is_word_guessed(secret_word, letters_guessed):
    
-    return all([True if(i in letters_guessed) else False for i in secret_word])	
+    return all([i in letters_guessed for i in secret_word])	
 
 def get_guessed_word(secret_word, letters_guessed):
 
@@ -57,7 +57,7 @@ def hangman(secret_word, wordlist):
 	user_symbols=list()
 	print("You have " + str(warnings_counter) + " warnings left.")
 	
-	while((is_word_guessed(secret_word, user_symbols)==False) and (guesses_counter>0)):
+	while(not is_word_guessed(secret_word, user_symbols) and (guesses_counter>0)):
 
 		print("You have " + str(guesses_counter) + " guesses left.")
 		print("Available letters : " + get_available_letters(user_symbols))
@@ -66,15 +66,17 @@ def hangman(secret_word, wordlist):
 
 
 		if(len(entered_character)!=1 or (entered_character.isalpha()==False) or (entered_character in user_symbols)) :
-			warnings_counter-=1
-			print("Oops " + define_error(entered_character, user_symbols) + " You now have " + str(warnings_counter) + " warnings. " + get_guessed_word(secret_word, user_symbols))
-			print("-"*60)
 			if(warnings_counter<1):
 				guesses_counter-=1
-				warnings_counter=3
+											
+			else:
+				warnings_counter-=1
+			print("Oops " + define_error(entered_character, user_symbols) + " You now have " + str(warnings_counter) + " warnings. " + get_guessed_word(secret_word, user_symbols))
+			print("-"*60)
 			continue
-		
-		user_symbols.append(entered_character)
+
+		else:
+			user_symbols.append(entered_character)
 		
 		
 		if(entered_character in secret_word):
@@ -86,11 +88,7 @@ def hangman(secret_word, wordlist):
 
 			
 		print("-"*60)
-
-		if(warnings_counter<1):
-			guesses_counter-=1
-			warnings_counter=3
-
+	
 	if(is_word_guessed(secret_word, user_symbols)==True):
 		score+=(guesses_counter)*unique_letters(secret_word)
 		print("\nCongratulations, you won! Your total score for this game is: " + str(score))	
@@ -108,21 +106,7 @@ def match_with_gaps(my_word, other_word):
 	if(len(my_word)!=len(other_word)):
 		return False
 
-	my_word_gaps=my_word
-	my_word=my_word.replace(" ", "")
-
-	dict_my_word=dict()
-	dict_other_word=dict()
-
-	if(set(my_word).issubset(set(other_word))):
-
-		for symbol in set(my_word):
-			dict_my_word[symbol]=my_word.count(symbol)
-			dict_other_word[symbol]=other_word.count(symbol)
-
-		return all([False if dict_my_word[symbol]!=dict_other_word[symbol] else True for symbol in my_word]) and all([True if((my_word_gaps[i]==other_word[i]) and (my_word_gaps[i]!=" ") or (my_word_gaps[i]==" ")) else False for i in range(len(my_word_gaps))])
-				
-	else: return False
+	return all([((symbol in other_word) and (my_word.count(symbol)==other_word.count(symbol)) and (symbol.isalpha()) and all([(my_word[i]==other_word[i] and my_word[i].isalpha()) or not my_word[i].isalpha() for i in range(len(my_word))])) or not(symbol.isalpha()) for symbol in my_word])
 
 def define_error(text, user_symbols):
 	if(len(text)!=1):
@@ -135,7 +119,7 @@ def define_error(text, user_symbols):
 def show_possible_matches(my_word):
 	my_word=my_word.replace("_", "")
 	appropriate_words=""
-	appropriate_words=" ".join([word for word in wordlist if(match_with_gaps(my_word, word)==True)])
+	appropriate_words=" ".join([word for word in wordlist if(match_with_gaps(my_word, word))])
 	if(appropriate_words):
 		print (appropriate_words)
 	else: print ("No matches found!")
@@ -155,7 +139,7 @@ def hangman_with_hints(secret_word, wordlist):
 	user_symbols=list()
 	print("You have " + str(warnings_counter) + " warnings left.")
 	
-	while((is_word_guessed(secret_word, user_symbols)==False) and (guesses_counter>0)):
+	while(not is_word_guessed(secret_word, user_symbols) and (guesses_counter>0)):
 
 		print("You have " + str(guesses_counter) + " guesses left.")
 		print("Available letters : " + get_available_letters(user_symbols))
@@ -163,16 +147,19 @@ def hangman_with_hints(secret_word, wordlist):
 		entered_character=input("Please guess a letter : ").lower()
 
 
-		if(len(entered_character)!=1 or (entered_character.isalpha()==False and entered_character!="*") or (entered_character in user_symbols)) :
-			warnings_counter-=1
-			print("Oops " + define_error(entered_character, user_symbols) + " You now have " + str(warnings_counter) + " warnings. " + get_guessed_word(secret_word, user_symbols))
-			print("-"*60)
+		if(len(entered_character)!=1 or ((entered_character.isalpha()==False) and (entered_character!="*")) or (entered_character in user_symbols)) :
 			if(warnings_counter<1):
 				guesses_counter-=1
-				warnings_counter=3
+												
+			else:
+				warnings_counter-=1
+
+			print("Oops " + define_error(entered_character, user_symbols) + " You now have " + str(warnings_counter) + " warnings. " + get_guessed_word(secret_word, user_symbols))
+			print("-"*60)
 			continue
-		
-		user_symbols.append(entered_character)
+
+		else:
+			user_symbols.append(entered_character)
 		
 		
 		if(entered_character in secret_word):
@@ -193,9 +180,6 @@ def hangman_with_hints(secret_word, wordlist):
 
 		print("-"*60)
 
-		if(warnings_counter<1):
-			guesses_counter-=1
-			warnings_counter=3
 
 	if(is_word_guessed(secret_word, user_symbols)==True) and hint_activated==False:
 		score+=(guesses_counter)*unique_letters(secret_word)
