@@ -106,8 +106,8 @@ def match_with_gaps(my_word, other_word):
 	if(len(my_word)!=len(other_word)):
 		return False
 
-	return all([((symbol in other_word) and (my_word.count(symbol)==other_word.count(symbol)) and (symbol.isalpha()) and all([(my_word[i]==other_word[i] and my_word[i].isalpha()) or not my_word[i].isalpha() for i in range(len(my_word))])) or not(symbol.isalpha()) for symbol in my_word])
-
+	return all([((symbol in other_word) and all([True if( (my_word[i]==" ") and (other_word[i].isalpha() and not (other_word[i] in my_word) )  or (my_word[i].isalpha())) else False for i in range(len(my_word))]) and (symbol.isalpha()) and all([(my_word[i]==other_word[i] and my_word[i].isalpha()) or not my_word[i].isalpha() for i in range(len(my_word))])) or not(symbol.isalpha()) for symbol in my_word])
+	
 def define_error(text, user_symbols):
 	if(len(text)!=1):
 		return "You have to enter one character!"
