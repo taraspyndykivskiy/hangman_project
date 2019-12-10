@@ -105,9 +105,21 @@ def match_with_gaps(my_word, other_word):
 
 	if(len(my_word)!=len(other_word)):
 		return False
-
-	return all([((symbol in other_word) and all([True if( (my_word[i]==" ") and (other_word[i].isalpha() and not (other_word[i] in my_word) )  or (my_word[i].isalpha())) else False for i in range(len(my_word))]) and (symbol.isalpha()) and all([(my_word[i]==other_word[i] and my_word[i].isalpha()) or not my_word[i].isalpha() for i in range(len(my_word))])) or not(symbol.isalpha()) for symbol in my_word])
 	
+	#character_corresponds=all([(my_word[i]==other_word[i]) or not my_word[i].isalpha() for i in range(len(my_word))])
+	#complete_fill_of_letter=all([(not my_word[i].isalpha() and other_word[i] not in my_word) or my_word[i].isalpha() for i in range(len(my_word))])
+
+	#we can get rid of "not my_word[i].isalpha()" although it doesn't seem so obvious to me:
+
+	#complete_fill_of_letter=all([other_word[i] not in my_word or my_word[i].isalpha() for i in range(len(my_word))])
+
+	#return character_corresponds and complete_fill_of_letter
+	
+
+	#or might be placed in one line:
+
+	return all([((my_word[i]==other_word[i]) or not my_word[i].isalpha()) and (other_word[i] not in my_word or my_word[i].isalpha()) for i in range(len(my_word))])
+
 def define_error(text, user_symbols):
 	if(len(text)!=1):
 		return "You have to enter one character!"
@@ -147,7 +159,7 @@ def hangman_with_hints(secret_word, wordlist):
 		entered_character=input("Please guess a letter : ").lower()
 
 
-		if(len(entered_character)!=1 or ((entered_character.isalpha()==False) and (entered_character!="*")) or (entered_character in user_symbols)) :
+		if(len(entered_character)!=1 or (not (entered_character.isalpha()) and (entered_character!="*")) or (entered_character in user_symbols)) :
 			if(warnings_counter<1):
 				guesses_counter-=1
 												
@@ -175,7 +187,7 @@ def hangman_with_hints(secret_word, wordlist):
 		if(entered_character=='*'):
 			hint_activated=True
 			print("Possible word matches are: ")
-			show_possible_matches(get_guessed_word(secret_word, user_symbols).replace("_",""))
+			show_possible_matches(get_guessed_word(secret_word, user_symbols))
 			user_symbols.remove(entered_character)
 
 		print("-"*60)
